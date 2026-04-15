@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+{% block title %}{{ student.name }} - EduManage{% endblock %}
+{% block page_title %}Student Profile{% endblock %}
+
+{% block content %}
+<!-- Profile Header -->
+<div class="profile-header mb-4">
+    <div class="d-flex align-items-center gap-4 flex-wrap">
+        <div class="profile-avatar">{{ student.name[0].upper() }}</div>
+        <div class="flex-grow-1">
+            <h2 class="fw-bold mb-1">{{ student.name }}</h2>
+            <div class="d-flex flex-wrap gap-3">
+                <span><i class="bi bi-hash me-1"></i><code class="text-light">{{ student.roll_number }}</code></span>
+                <span><i class="bi bi-envelope me-1"></i>{{ student.email }}</span>
+                {% if student.phone %}<span><i class="bi bi-telephone me-1"></i>{{ student.phone }}</span>{% endif %}
+            </div>
+        </div>
+        <div class="d-flex gap-2">
+            <a href="{{ url_for('edit_student', id=student.id) }}" class="btn btn-light btn-sm">
+                <i class="bi bi-pencil me-1"></i>Edit
+            </a>
+            <form method="POST" action="{{ url_for('delete_student', id=student.id) }}" class="d-inline">
+                <button type="submit" class="btn btn-danger btn-sm"
+                        data-confirm="Delete {{ student.name }}? This cannot be undone.">
+                    <i class="bi bi-trash me-1"></i>Delete
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Info Card -->
+    <div class="col-lg-4">
+        <div class="card h-100">
+            <div class="card-header border-0 pt-4 px-4">
+                <h6 class="fw-bold mb-0"><i class="bi bi-person-badge me-2 text-primary"></i>Student Details</h6>
+            </div>
+            <div class="card-body p-4">
+                <div class="info-item mb-3">
+                    <div class="text-muted small mb-1">Department</div>
+                    <span class="badge-dept">{{ student.department }}</span>
+                </div>
+                <div class="info-item mb-3">
+                    <div class="text-muted small mb-1">Year</div>
+                    <span class="badge-year">Year {{ student.year }}</span>
+                </div>
+                <div class="info-item mb-3">
+                    <div class="text-muted small mb-1">Gender</div>
+                    <div class="fw-500">{{ student.gender }}</div>
+                </div>
+                {% if student.date_of_birth %}
+                <div class="info-item mb-3">
+                    <div class="text-muted small mb-1">Date of Birth</div>
+                    <div class="fw-500">{{ student.date_of_birth }}</div>
+                </div>
+                {% endif %}
+                {% if student.address %}
+                <div class="info-item mb-3">
+                    <div class="text-muted small mb-1">Address</div>
+                    <div class="fw-500 small">{{ student.address }}</div>
+                </div>
+                {% endif %}
+                {% if avg_marks %}
+                <hr>
+                <div class="info-item">
+                    <div class="text-muted small mb-1">Average Score</div>
+                    <div class="fw-bold text-primary fs-4">{{ "%.1f"|format(avg_marks) }}%</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Grades -->
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header border-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                <h6 class="fw-bold mb-0"><i class="bi bi-bar-chart-fill me-2 text-primary"></i>Academic Grades</h6>
+                <a href="{{ url_for('add_grade', id=student.id) }}" class="btn btn-primary btn-sm">
+                    <i class="bi bi-plus-lg me-1"></i>Add Grade
+                </a>
+            </div>
+            <div class="card-body px-0">
+                {% if grades %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th class="ps-4">Subject</th>
+                                <th>Semester</th>
+                                <th>Marks</th>
+                                <th>Max</th>
+                                <th>Percentage</th>
+                                <th>Grade</th>
+                                <th class="pe-4 text-center">Del</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for g in grades %}
+                            {% set pct = (g.marks / g.max_marks * 100)|int %}
+                            <tr>
+                                <td class="ps-4 fw-600">{{ g.subject }}</td>
+                                <td class="text-muted">Sem {{ g.semester }}</td>
+                                <td class="fw-600">{{ g.marks|int }}</td>
+                                <td class="text-muted">{{ g.max_marks|int }}</td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="progress flex-grow-1" style="height:6px;border-radius:20px;max-width:80px;">
+                                            <div class="progress-bar" style="width:{{ pct }}%;background:linear-gradient(90deg,#4f46e5,#818cf8);"></div>
+                                        </div>
+                                        <small>{{ pct }}%</small>
+                                    </div>
+                                </td>
+                                <td>
+                                    {% set gc = g.grade.replace('+','p') %}
+                                    <span class="grade-badge grade-{{ gc }}">{{ g.grade }}</span>
+                                </td>
+                                <td class="pe-4 text-center">
+                                    <form method="POST" action="{{ url_for('delete_grade', grade_id=g.id) }}" class="d-inline">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger"
+                                                data-confirm="Delete grade for {{ g.subject }}?">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="empty-state">
+                    <i class="bi bi-bar-chart d-block"></i>
+                    <h5>No grades yet</h5>
+                    <p>Add grades to track academic performance.</p>
+                    <a href="{{ url_for('add_grade', id=student.id) }}" class="btn btn-primary mt-2">Add Grade</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

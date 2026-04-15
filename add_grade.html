@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}Add Grade - EduManage{% endblock %}
+{% block page_title %}Add Grade{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card">
+            <div class="card-header border-0 pt-4 px-4">
+                <h5 class="fw-bold mb-0"><i class="bi bi-bar-chart-fill me-2 text-primary"></i>Add Grade</h5>
+                <p class="text-muted small mt-1 mb-0">For: <strong>{{ student.name }}</strong> ({{ student.roll_number }})</p>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Subject <span class="text-danger">*</span></label>
+                        <input type="text" name="subject" class="form-control" placeholder="e.g. Data Structures" required>
+                    </div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-6">
+                            <label class="form-label">Marks Obtained <span class="text-danger">*</span></label>
+                            <input type="number" name="marks" class="form-control" placeholder="e.g. 85" min="0" max="1000" step="0.5" required>
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label">Maximum Marks</label>
+                            <input type="number" name="max_marks" class="form-control" value="100" min="1" step="0.5">
+                        </div>
+                    </div>
+                    <div class="mb-4">
+                        <label class="form-label">Semester <span class="text-danger">*</span></label>
+                        <select name="semester" class="form-select" required>
+                            {% for s in range(1, 9) %}
+                            <option value="{{ s }}">Semester {{ s }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Grade preview -->
+                    <div class="alert alert-light border mb-4">
+                        <small class="text-muted d-block mb-2 fw-600">Grade Scale Reference</small>
+                        <div class="d-flex flex-wrap gap-2">
+                            <span class="grade-badge grade-Ap">A+ (90-100)</span>
+                            <span class="grade-badge grade-A">A (80-89)</span>
+                            <span class="grade-badge grade-Bp">B+ (70-79)</span>
+                            <span class="grade-badge grade-B">B (60-69)</span>
+                            <span class="grade-badge grade-C">C (50-59)</span>
+                            <span class="grade-badge grade-D">D (40-49)</span>
+                            <span class="grade-badge grade-F">F (&lt;40)</span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-3 justify-content-end">
+                        <a href="{{ url_for('view_student', id=student.id) }}" class="btn btn-outline-secondary">Cancel</a>
+                        <button type="submit" class="btn btn-primary px-4">
+                            <i class="bi bi-plus-lg me-1"></i>Add Grade
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

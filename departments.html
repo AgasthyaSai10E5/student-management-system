@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block title %}Departments - EduManage{% endblock %}
+{% block page_title %}Departments{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    {% if dept_stats %}
+        {% for d in dept_stats %}
+        <div class="col-md-6 col-xl-4">
+            <div class="card h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-start justify-content-between mb-3">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="stat-icon rounded-3 p-2" style="background:var(--primary-light);">
+                                <i class="bi bi-building fs-4 text-primary"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold mb-0">{{ d.department }}</h6>
+                                <small class="text-muted">{{ d.total }} Students</small>
+                            </div>
+                        </div>
+                        <span class="badge bg-primary rounded-pill">{{ d.total }}</span>
+                    </div>
+                    <hr>
+                    <div class="row text-center g-2 mt-1">
+                        {% for year, count in [('1st', d.year1), ('2nd', d.year2), ('3rd', d.year3), ('4th', d.year4)] %}
+                        <div class="col-3">
+                            <div class="fw-bold text-primary">{{ count }}</div>
+                            <small class="text-muted">{{ year }}</small>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="mt-3">
+                        <a href="{{ url_for('students') }}?department={{ d.department }}" class="btn btn-outline-primary btn-sm w-100">
+                            <i class="bi bi-people me-1"></i>View Students
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body">
+                <div class="empty-state">
+                    <i class="bi bi-building d-block"></i>
+                    <h5>No departments yet</h5>
+                    <p>Add students to see department statistics.</p>
+                    <a href="{{ url_for('add_student') }}" class="btn btn-primary mt-2">Add Student</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
